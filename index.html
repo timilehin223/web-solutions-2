@@ -3,112 +3,157 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rock Paper Scissors Game</title>
+  <title>Advanced Rock Paper Scissors</title>
   <style>
-    section {
+    body {
+      font-family: sans-serif;
+      background: #f0f8ff;
+      margin: 0;
+      padding: 20px;
       text-align: center;
-      color: blue;
-      width: 500px;
-      max-width: 90vw;
-      padding: 5px;
-      margin: auto;
-      border: 1px solid blue;
-      border-radius: 5px;
-      font-size: 1.5rem;
-      background: azure;
-      box-shadow: 1px 1px black;
     }
 
-    article {
-      display: flex;
-      flex-flow: column nowrap;
+    main {
+      max-width: 600px;
+      margin: auto;
+      border: 2px solid #4682b4;
+      border-radius: 10px;
+      padding: 20px;
+      background: #ffffff;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
     }
 
     h1 {
-      border-bottom: 1px solid blue;
-      padding-bottom: 1rem;
-      text-shadow: 0.5px 0.5px black;
+      color: #1e3a8a;
     }
 
-    #gameState {
-      margin-bottom: 1rem;
+    .scoreboard {
+      margin: 1rem 0;
+      font-size: 1.2rem;
+    }
+
+    .choices {
+      margin: 1rem 0;
     }
 
     button {
-      margin: 1rem 0.5rem;
-      font-size: 1.5rem;
-      border: 1px solid blue;
-      border-radius: 5px;
-      color: blue;
-      background: azure;
+      font-size: 2rem;
+      margin: 0.5rem;
+      padding: 10px 20px;
+      border: 1px solid #4682b4;
+      border-radius: 8px;
+      background-color: #e6f2ff;
       cursor: pointer;
-      box-shadow: 1px 1px black;
-      transition: 0.5s;
-      text-transform: uppercase;
-      padding: 5px 10px;
+      transition: transform 0.2s;
     }
 
     button:hover {
-      scale: 0.9;
-      transition: 0.5s;
+      transform: scale(1.1);
     }
 
-    button:active {
-      scale: 0.8;
-      transition: 0.5s;
+    #resultLog {
+      margin-top: 1rem;
+      font-weight: bold;
+      min-height: 2rem;
+    }
+
+    .reset {
+      margin-top: 1rem;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border: none;
+      background-color: #dbeafe;
+      border-radius: 5px;
+      color: #1e3a8a;
+      cursor: pointer;
+    }
+
+    .reset:hover {
+      background-color: #bfdbfe;
     }
   </style>
 </head>
 <body>
-  <section>
-    <article>
-      <h1 id="gameState">Make your choice to start the game.</h1>
-      <b>Opponent's choice: </b><span id="opponentChoice">?</span>
-      <b>Your choice: </b><span id="playerChoice">?</span>
-    </article>
-    <div>
-      <button onclick="playerRoll('✊')">✊</button>
-      <button onclick="playerRoll('✋')">✋</button>
-      <button onclick="playerRoll('✌')">✌</button>
+  <main>
+    <h1>Rock Paper Scissors</h1>
+
+    <div class="scoreboard">
+      <div>🧑 You: <span id="playerScore">0</span></div>
+      <div>🤖 Opponent: <span id="opponentScore">0</span></div>
     </div>
-    <button onclick="reset()">Reset</button>
-  </section>
+
+    <div class="choices">
+      <button data-choice="rock">✊</button>
+      <button data-choice="paper">✋</button>
+      <button data-choice="scissors">✌</button>
+    </div>
+
+    <div id="resultLog">Make your move!</div>
+    <button class="reset" onclick="Game.reset()">Reset Game</button>
+  </main>
 
   <script>
-    function playerRoll(roll) {
-      const gameState = document.getElementById("gameState");
-      const opponentChoice = document.getElementById("opponentChoice");
-      const playerChoice = document.getElementById("playerChoice");
-      const randomNumber = Math.floor(Math.random() * 3);
+    class Game {
+      static choices = {
+        rock: { icon: '✊', beats: 'scissors' },
+        paper: { icon: '✋', beats: 'rock' },
+        scissors: { icon: '✌', beats: 'paper' }
+      };
 
-      if (randomNumber === 0) {
-        opponentChoice.innerHTML = "✊";
-      } else if (randomNumber === 1) {
-        opponentChoice.innerHTML = "✋";
-      } else {
-        opponentChoice.innerHTML = "✌";
+      static scores = {
+        player: 0,
+        opponent: 0
+      };
+
+      static playerScoreEl = document.getElementById('playerScore');
+      static opponentScoreEl = document.getElementById('opponentScore');
+      static resultLog = document.getElementById('resultLog');
+
+      static getRandomChoice() {
+        const keys = Object.keys(Game.choices);
+        return keys[Math.floor(Math.random() * keys.length)];
       }
 
-      playerChoice.innerHTML = roll;
+      static playRound(playerChoice) {
+        const opponentChoice = Game.getRandomChoice();
 
-      if (opponentChoice.innerHTML === playerChoice.innerHTML) {
-        gameState.innerHTML = "Tie!";
-      } else if (
-        (opponentChoice.innerHTML === "✊" && playerChoice.innerHTML === "✋") ||
-        (opponentChoice.innerHTML === "✋" && playerChoice.innerHTML === "✌") ||
-        (opponentChoice.innerHTML === "✌" && playerChoice.innerHTML === "✊")
-      ) {
-        gameState.innerHTML = "You won!";
-      } else {
-        gameState.innerHTML = "Your opponent won!";
+        const player = Game.choices[playerChoice];
+        const opponent = Game.choices[opponentChoice];
+
+        let resultMessage = `You chose ${player.icon}, opponent chose ${opponent.icon}. `;
+
+        if (playerChoice === opponentChoice) {
+          resultMessage += "It's a tie!";
+        } else if (player.beats === opponentChoice) {
+          Game.scores.player++;
+          resultMessage += "You win!";
+        } else {
+          Game.scores.opponent++;
+          resultMessage += "Your opponent wins!";
+        }
+
+        Game.updateUI(resultMessage);
+      }
+
+      static updateUI(message) {
+        Game.playerScoreEl.textContent = Game.scores.player;
+        Game.opponentScoreEl.textContent = Game.scores.opponent;
+        Game.resultLog.textContent = message;
+      }
+
+      static reset() {
+        Game.scores.player = 0;
+        Game.scores.opponent = 0;
+        Game.updateUI("Game reset. Make your move!");
       }
     }
 
-    function reset() {
-      document.getElementById("gameState").innerHTML = "Make your choice to start the game.";
-      document.getElementById("opponentChoice").innerHTML = "?";
-      document.getElementById("playerChoice").innerHTML = "?";
-    }
+    document.querySelectorAll('button[data-choice]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const choice = btn.getAttribute('data-choice');
+        Game.playRound(choice);
+      });
+    });
   </script>
 </body>
 </html>
