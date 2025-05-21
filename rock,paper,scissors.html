@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rock Paper Scissors Game</title>
+  <style>
+    section {
+      text-align: center;
+      color: blue;
+      width: 500px;
+      max-width: 90vw;
+      padding: 5px;
+      margin: auto;
+      border: 1px solid blue;
+      border-radius: 5px;
+      font-size: 1.5rem;
+      background: azure;
+      box-shadow: 1px 1px black;
+    }
+
+    article {
+      display: flex;
+      flex-flow: column nowrap;
+    }
+
+    h1 {
+      border-bottom: 1px solid blue;
+      padding-bottom: 1rem;
+      text-shadow: 0.5px 0.5px black;
+    }
+
+    #gameState {
+      margin-bottom: 1rem;
+    }
+
+    button {
+      margin: 1rem 0.5rem;
+      font-size: 1.5rem;
+      border: 1px solid blue;
+      border-radius: 5px;
+      color: blue;
+      background: azure;
+      cursor: pointer;
+      box-shadow: 1px 1px black;
+      transition: 0.5s;
+      text-transform: uppercase;
+      padding: 5px 10px;
+    }
+
+    button:hover {
+      scale: 0.9;
+      transition: 0.5s;
+    }
+
+    button:active {
+      scale: 0.8;
+      transition: 0.5s;
+    }
+  </style>
+</head>
+<body>
+  <section>
+    <article>
+      <h1 id="gameState">Make your choice to start the game.</h1>
+      <b>Opponent's choice: </b><span id="opponentChoice">?</span>
+      <b>Your choice: </b><span id="playerChoice">?</span>
+    </article>
+    <div>
+      <button onclick="playerRoll('✊')">✊</button>
+      <button onclick="playerRoll('✋')">✋</button>
+      <button onclick="playerRoll('✌')">✌</button>
+    </div>
+    <button onclick="reset()">Reset</button>
+  </section>
+
+  <script>
+    function playerRoll(roll) {
+      const gameState = document.getElementById("gameState");
+      const opponentChoice = document.getElementById("opponentChoice");
+      const playerChoice = document.getElementById("playerChoice");
+      const randomNumber = Math.floor(Math.random() * 3);
+
+      if (randomNumber === 0) {
+        opponentChoice.innerHTML = "✊";
+      } else if (randomNumber === 1) {
+        opponentChoice.innerHTML = "✋";
+      } else {
+        opponentChoice.innerHTML = "✌";
+      }
+
+      playerChoice.innerHTML = roll;
+
+      if (opponentChoice.innerHTML === playerChoice.innerHTML) {
+        gameState.innerHTML = "Tie!";
+      } else if (
+        (opponentChoice.innerHTML === "✊" && playerChoice.innerHTML === "✋") ||
+        (opponentChoice.innerHTML === "✋" && playerChoice.innerHTML === "✌") ||
+        (opponentChoice.innerHTML === "✌" && playerChoice.innerHTML === "✊")
+      ) {
+        gameState.innerHTML = "You won!";
+      } else {
+        gameState.innerHTML = "Your opponent won!";
+      }
+    }
+
+    function reset() {
+      document.getElementById("gameState").innerHTML = "Make your choice to start the game.";
+      document.getElementById("opponentChoice").innerHTML = "?";
+      document.getElementById("playerChoice").innerHTML = "?";
+    }
+  </script>
+</body>
+</html>
